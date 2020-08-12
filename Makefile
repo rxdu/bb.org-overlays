@@ -117,11 +117,9 @@ export quiet Q KBUILD_VERBOSE
 
 all_%:
 	$(Q)$(MAKE) ARCH=$* all_arch
-	$(CC)gcc -o config-pin ./tools/pmunts_muntsos/config-pin.c
 
 clean_%:
 	$(Q)$(MAKE) ARCH=$* clean_arch
-	rm config-pin || true
 
 install_%:
 	$(Q)$(MAKE) ARCH=$* install_arch
@@ -178,10 +176,8 @@ all_arch: $(ARCH_DTB)
 
 PHONY += install_arch
 install_arch: $(ARCH_DTBO)
-	mkdir -p $(DESTDIR)/lib/firmware/
-	cp -v $(obj)/*.dtbo $(DESTDIR)/lib/firmware/
-	mkdir -p $(DESTDIR)/usr/bin/
-	cp -v config-pin $(DESTDIR)/usr/bin/
+	mkdir -p $(DESTDIR)/boot/dtbs/$(shell uname -r)/overlays/
+	cp -v $(obj)/*.dtbo $(DESTDIR)/boot/dtbs/$(shell uname -r)/overlays/
 
 RCS_FIND_IGNORE := \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS \
                    -o -name .pc -o -name .hg -o -name .git \) -prune -o
