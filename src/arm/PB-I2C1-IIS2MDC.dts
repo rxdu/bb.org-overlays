@@ -1,0 +1,70 @@
+/*
+ * Copyright (C) 2017 Robert Nelson <robertcnelson@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/board/am335x-bbw-bbb-base.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/am33xx.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/ {
+	/*
+	 * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+	 */
+	fragment@0 {
+		target-path="/";
+		__overlay__ {
+
+			chosen {
+				overlays {
+					PB-I2C1-IIS2MDC = __TIMESTAMP__;
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+
+			iis2mdc: pinmux_iis2mdc_pins {
+				pinctrl-single,pins = <
+					AM33XX_IOPAD(0x0850, PIN_INPUT | MUX_MODE7 ) /* (R14) gpmc_a4.gpio1[20] INT */
+				>;
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&ocp>;
+		__overlay__ {
+
+			P2_10_pinmux {
+				status = "disabled";
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c1>;
+		__overlay__ {
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			iis2mdc@1e {
+				compatible = "st,iis2mdc_magn";
+				reg = <0x1e>;
+				interrupt-parent = <&gpio1>;
+				interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
+			};
+		};
+	};
+};
+
