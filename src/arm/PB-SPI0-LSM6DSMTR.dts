@@ -7,90 +7,91 @@
  *
  */
 
-/dts-v1/;
-/plugin/;
-
-#include <dt-bindings/gpio/gpio.h>
-#include <dt-bindings/pinctrl/am33xx.h>
-#include <dt-bindings/interrupt-controller/irq.h>
-
-/ {
-	/*
-	 * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
-	 */
-	fragment@0 {
-		target-path="/";
-		__overlay__ {
-
-			chosen {
-				overlays {
-					PB-SPI0-LSM6DSMTR = __TIMESTAMP__;
-				};
-			};
-		};
-	};
-
-	/*
-	 * Free up the pins used by the cape from the pinmux helpers.
-	 */
-	fragment@1 {
-		target = <&ocp>;
-		__overlay__ {
-			P1_04_pinmux { status = "disabled"; }; /* LSM6DSMTR INT1 */
-			P1_06_pinmux { status = "disabled"; }; /* SPI0 CS0 */
-			P1_08_pinmux { status = "disabled"; }; /* SPI0 CLK */
-			P1_10_pinmux { status = "disabled"; }; /* SPI0 MISO */
-			P1_12_pinmux { status = "disabled"; }; /* SPI0 MOSI */
-			P2_22_pinmux { status = "disabled"; }; /* LSM6DSMTR INT2 (not used) */
-		};
-	};
-
-	fragment@2 {
-		target = <&am33xx_pinmux>;
-		__overlay__ {
-			lsm6dsmtr_pins: pinmux_lsm6dsmtr_pins {
-				pinctrl-single,pins = <
-					AM33XX_IOPAD(0x0838, PIN_INPUT | MUX_MODE7 ) /* (T6) P2_22, gpmc_ad14.gpio1[14] INT2 */
-					AM33XX_IOPAD(0x08ec, PIN_INPUT | MUX_MODE7 ) /* (R6) P1_04, gpmc_a11.gpio2[25] INT1 */
-				>;
-			};
-
-			pb_spi0_pins: pinmux_pb_spi0_pins {
-				pinctrl-single,pins = <
-					AM33XX_IOPAD(0x0950, PIN_INPUT | MUX_MODE0 ) /* (A17) spi0_sclk.spi0_sclk */
-					AM33XX_IOPAD(0x0954, PIN_INPUT | MUX_MODE0 ) /* (B17) spi0_d0.spi0_d0 */
-					AM33XX_IOPAD(0x0958, PIN_INPUT | MUX_MODE0 ) /* (B16) spi0_d1.spi0_d1 */
-					AM33XX_IOPAD(0x095c, PIN_INPUT | MUX_MODE0 ) /* (A16) spi0_cs0.spi0_cs0 */
-				>;
-			};
-		};
-	};
-
-	fragment@3 {
-		target = <&spi0>;
-		__overlay__ {
-			status = "okay";
-			pinctrl-names = "default";
-			pinctrl-0 = <&pb_spi0_pins>;
-
-			channel@0{ status = "disabled"; };
-			channel@1{ status = "disabled"; };
-		};
-	};
-
-	fragment@4 {
-		target = <&spi0>;
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			lsm6dsmtr: lsm6dsm@0 {
-                spi-max-frequency = <5000000>;
-				compatible = "st,lsm6dsm";
-				reg = <0x0>;
-                interrupt-parent = <&gpio2>;
-				interrupts = <25 IRQ_TYPE_LEVEL_HIGH>;
-			};
-		};
-	};
-};
+ /dts-v1/;
+ /plugin/;
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/am33xx.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+     /*
+      * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+      */
+     fragment@0 {
+         target-path="/";
+         __overlay__ {
+ 
+             chosen {
+                 overlays {
+                     PB-SPI0-LSM6DSMTR = __TIMESTAMP__;
+                 };
+             };
+         };
+     };
+ 
+     /*
+      * Free up the pins used by the cape from the pinmux helpers.
+      */
+     fragment@1 {
+         target = <&ocp>;
+         __overlay__ {
+             P1_04_pinmux { status = "disabled"; }; /* LSM6DSMTR INT2 (not used) */
+             P1_06_pinmux { status = "disabled"; }; /* SPI0 CS0 */
+             P1_08_pinmux { status = "disabled"; }; /* SPI0 CLK */
+             P1_10_pinmux { status = "disabled"; }; /* SPI0 MISO */
+             P1_12_pinmux { status = "disabled"; }; /* SPI0 MOSI */
+             P2_22_pinmux { status = "disabled"; }; /* LSM6DSMTR INT1 */
+         };
+     };
+ 
+     fragment@2 {
+         target = <&am33xx_pinmux>;
+         __overlay__ {
+             lsm6dsmtr_pins: pinmux_lsm6dsmtr_pins {
+                 pinctrl-single,pins = <
+                     AM33XX_IOPAD(0x0838, PIN_INPUT | MUX_MODE7 ) /* (T6) P2_22, gpmc_ad14.gpio1[14] INT1 */
+                     AM33XX_IOPAD(0x08ec, PIN_INPUT | MUX_MODE7 ) /* (R6) P1_04, gpmc_a11.gpio2[25] INT2 */
+                 >;
+             };
+ 
+             pb_spi0_pins: pinmux_pb_spi0_pins {
+                 pinctrl-single,pins = <
+                     AM33XX_IOPAD(0x0950, PIN_INPUT | MUX_MODE0 ) /* (A17) spi0_sclk.spi0_sclk */
+                     AM33XX_IOPAD(0x0954, PIN_INPUT | MUX_MODE0 ) /* (B17) spi0_d0.spi0_d0 */
+                     AM33XX_IOPAD(0x0958, PIN_INPUT | MUX_MODE0 ) /* (B16) spi0_d1.spi0_d1 */
+                     AM33XX_IOPAD(0x095c, PIN_INPUT | MUX_MODE0 ) /* (A16) spi0_cs0.spi0_cs0 */
+                 >;
+             };
+         };
+     };
+ 
+     fragment@3 {
+         target = <&spi0>;
+         __overlay__ {
+             status = "okay";
+             pinctrl-names = "default";
+             pinctrl-0 = <&pb_spi0_pins>;
+ 
+             channel@0{ status = "disabled"; };
+             channel@1{ status = "disabled"; };
+         };
+     };
+ 
+     fragment@4 {
+         target = <&spi0>;
+         __overlay__ {
+             #address-cells = <1>;
+             #size-cells = <0>;
+ 
+             lsm6dsmtr: lsm6dsm@0 {
+                 spi-max-frequency = <5000000>;
+                 compatible = "st,lsm6dsm";
+                 reg = <0x0>;
+                 interrupt-parent = <&gpio1>;
+                 interrupts = <14 IRQ_TYPE_LEVEL_HIGH>;
+             };
+         };
+     };
+ };
+ 
