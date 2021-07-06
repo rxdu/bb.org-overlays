@@ -51,7 +51,7 @@
              lsm6dsmtr_pins: pinmux_lsm6dsmtr_pins {
                  pinctrl-single,pins = <
                      AM33XX_IOPAD(0x0838, PIN_INPUT | MUX_MODE7 ) /* (T6) P2_22, gpmc_ad14.gpio1[14] INT1 */
-                     AM33XX_IOPAD(0x08ec, PIN_INPUT | MUX_MODE7 ) /* (R6) P1_04, gpmc_a11.gpio2[25] INT2 */
+                    /* AM33XX_IOPAD(0x08ec, PIN_INPUT | MUX_MODE7 )  (R6) P1_04, gpmc_a11.gpio2[25] INT2 */
                  >;
              };
  
@@ -88,8 +88,10 @@
                  spi-max-frequency = <5000000>;
                  compatible = "st,lsm6dsm";
                  reg = <0x0>;
+                 pinctrl-0 = <&lsm6dsmtr_pins>;
                  interrupt-parent = <&gpio1>;
                  interrupts = <14 IRQ_TYPE_LEVEL_HIGH>;
+                 st,drdy-int-pin = <1>;
              };
          };
      };

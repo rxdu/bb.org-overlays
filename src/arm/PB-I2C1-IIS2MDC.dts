@@ -33,7 +33,7 @@
 		target = <&am33xx_pinmux>;
 		__overlay__ {
 
-			iis2mdc: pinmux_iis2mdc_pins {
+			iis2mdc_pins: pinmux_iis2mdc_pins {
 				pinctrl-single,pins = <
 					AM33XX_IOPAD(0x0850, PIN_INPUT | MUX_MODE7 ) /* (R14) gpmc_a4.gpio1[20] INT */
 				>;
